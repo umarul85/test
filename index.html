@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Realtime Notifications</title>
+<script src="//js.pusher.com/3.2/pusher.min.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+</head>
+<body>
+<script type="text/javascript">				
+$( document ).ready( function () {	
+	
+	var pusher = new Pusher('9c092f95150ac02fb35c', {
+    cluster: 'ap1',
+    encrypted: true
+    });
+
+    var notificationsChannel = pusher.subscribe('notifications');
+    notificationsChannel.bind('new_notification', function(notification){
+	var message = notification.message;
+	toastr.success(message);
+	//$('div.notification').text(message);//or use this to disp on div clas notification
+    });
+	
+	$( "#btn-send" ).click( function () {
+		var message = document.getElementById( "message" ).value;
+		var dataString = 'message=' + message;
+
+				$.ajax( {
+					url: 'notification/index.php',
+					data: dataString,
+					cache: false,
+					success: function ( r ) {
+					//$( '#display' ).html( r ); //to display server message						
+					}
+				} );
+	} );
+} );
+    </script>
+<!--<div id="display">
+</div> to display server message-->
+ <!-- <div class="notification"></div> to display notification message-->
+  <input class="create-notification" id="message" placeholder="Send a notification :)">
+  </input>
+  <button class="submit-notification" id="btn-send">Send</button>
+
+</body>
+</html>
